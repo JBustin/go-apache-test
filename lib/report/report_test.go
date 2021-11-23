@@ -19,5 +19,10 @@ func Test_Report(t *testing.T) {
 	assert.Equal(t, 1, r.failed, "should compute all failed tests")
 	assert.Equal(t, 3, r.success, "should compute all success tests")
 	assert.Equal(t, 1, len(r.failures), "should store all failures")
-	assert.Equal(t, "\n\t\tTests:\t\t4\n\t\tFailed:\t\t1\n\t\tSuccess:\t3\n\t\t\n\t\tmydomain.com.conf > balance to new stack > faq\n\t\tinvalid data\n\t\n\n\t", r.String(), "should generate a valid report")
+	assert.Equal(
+		t,
+		"\n\t\tTests:\t\t4\n\t\tSkips: \t\t0\n\t\tFailed:\t\t1\n\t\tSuccess:\t3\n\t\t\n\t\tmydomain.com.conf > balance to new stack > faq\n\t\tinvalid data\n\t\n\n\t",
+		r.String(),
+		"should generate a valid report",
+	)
 }

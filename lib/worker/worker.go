@@ -12,6 +12,7 @@ import (
 	"github.com/go-apache-test/lib/filesystem"
 	"github.com/go-apache-test/lib/logger"
 	"github.com/go-apache-test/lib/report"
+	"github.com/go-apache-test/lib/test"
 	"github.com/go-apache-test/lib/utils"
 	"github.com/go-apache-test/lib/vhost"
 )
@@ -150,28 +151,7 @@ func (w *worker) RunTests() error {
 
 			for _, s := range v.Suites {
 				for _, r := range s.Rules {
-					r.Init(v.Expectations, s.Expectations)
-					w.logger.Debug(fmt.Sprintf("--> Request %s", r.Name))
-					result, err := r.Request()
-					w.logger.Debug(fmt.Sprintf("<-- Request %s", r.Name))
-					if err != nil {
-						failure := report.Add(v.OriPath, s.Name, r.Name, err)
-						w.logger.Info(r.StrError(err))
-						w.logger.Info(fmt.Sprint(failure))
-						return
-					}
-
-					w.logger.Debug(fmt.Sprintf("Validate %s", r.Name))
-					err = r.ShouldBe(result)
-					if err != nil {
-						failure := report.Add(v.OriPath, s.Name, r.Name, err)
-						w.logger.Info(r.StrError(err))
-						w.logger.Info(fmt.Sprint(failure))
-						return
-					}
-
-					report.Add(v.OriPath, s.Name, r.Name, err)
-					w.logger.Info(r.StrSuccess())
+					apply(v, s, r, &report, w.logger)
 				}
 			}
 
@@ -182,6 +162,37 @@ func (w *worker) RunTests() error {
 	w.logger.Info(fmt.Sprint(report))
 
 	return nil
+}
+
+func apply(v vhost.Vhost, s test.Suite, r test.Rule, report *report.Report, logger logger.Logger) {
+	r.Init(v.Expectations, s.Expectations)
+	if r.Skip || v.Skip || s.Skip {
+		report.AddSkip()
+		logger.Info(r.StrSkip())
+		return
+	}
+
+	logger.Debug(fmt.Sprintf("--> Request %s", r.Name))
+	result, err := r.Request()
+	logger.Debug(fmt.Sprintf("<-- Request %s", r.Name))
+	if err != nil {
+		failure := report.Add(v.OriPath, s.Name, r.Name, err)
+		logger.Info(r.StrError(err))
+		logger.Info(fmt.Sprint(failure))
+		return
+	}
+
+	logger.Debug(fmt.Sprintf("Validate %s", r.Name))
+	err = r.ShouldBe(result)
+	if err != nil {
+		failure := report.Add(v.OriPath, s.Name, r.Name, err)
+		logger.Info(r.StrError(err))
+		logger.Info(fmt.Sprint(failure))
+		return
+	}
+
+	report.Add(v.OriPath, s.Name, r.Name, err)
+	logger.Info(r.StrSuccess())
 }
 
 func (w worker) updateHttpdConf() error {

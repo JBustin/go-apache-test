@@ -6,10 +6,11 @@ import (
 	"sort"
 )
 
-type report struct {
+type Report struct {
 	tests    int
 	failed   int
 	success  int
+	skips    int
 	failures []failure
 }
 
@@ -20,16 +21,22 @@ type failure struct {
 	errorMsg  string
 }
 
-func New() report {
-	return report{
+func New() Report {
+	return Report{
 		tests:    0,
 		failed:   0,
 		success:  0,
+		skips:    0,
 		failures: []failure{},
 	}
 }
 
-func (r *report) Add(vhostName string, suiteName string, ruleName string, err error) failure {
+func (r *Report) AddSkip() {
+	r.tests++
+	r.skips++
+}
+
+func (r *Report) Add(vhostName string, suiteName string, ruleName string, err error) failure {
 	r.tests++
 	if err == nil {
 		r.success++
@@ -46,7 +53,7 @@ func (r *report) Add(vhostName string, suiteName string, ruleName string, err er
 	return f
 }
 
-func (r report) String() string {
+func (r Report) String() string {
 	sort.Slice(r.failures, func(i, j int) bool {
 		return r.failures[i].vhostName < r.failures[j].vhostName
 	})
@@ -58,10 +65,11 @@ func (r report) String() string {
 
 	return fmt.Sprintf(`
 		Tests:		%v
+		Skips: 		%v
 		Failed:		%v
 		Success:	%v
 		%v
-	`, r.tests, r.failed, r.success, failures)
+	`, r.tests, r.skips, r.failed, r.success, failures)
 }
 
 func (f failure) String() string {

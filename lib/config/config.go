@@ -14,8 +14,6 @@ type Config struct {
 	}
 	Debug struct {
 		LogLevel string
-		Config   bool
-		Backend  bool
 	}
 	Httpd struct {
 		Backends     []string
@@ -34,12 +32,8 @@ var DefaultConfig Config = Config{
 	},
 	Debug: struct {
 		LogLevel string
-		Config   bool
-		Backend  bool
 	}{
 		LogLevel: "info",
-		Config:   false,
-		Backend:  true,
 	},
 	Httpd: struct {
 		Backends     []string
@@ -56,15 +50,11 @@ func (c Config) String() string {
 	return fmt.Sprintf(`
 		FetchTimeoutMs		%v
 		Debug.LogLevel		%v
-		Debug.Config		%v
-		Debug.Backend		%v
 		httpd.Backends		%v
 		httpd.backendsPort 	%v
 		httpd.FormatCmd		%v
 	`, c.Test.FetchTimeoutMs,
 		c.Debug.LogLevel,
-		c.Debug.Config,
-		c.Debug.Backend,
 		c.Httpd.Backends,
 		c.Httpd.BackendsPort,
 		c.Httpd.FormatCmd)

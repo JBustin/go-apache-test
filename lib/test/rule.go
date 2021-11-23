@@ -14,6 +14,7 @@ type Rule struct {
 	Host         string
 	Pathname     string
 	Skip         bool
+	Only         bool
 	Headers      map[string]string
 	Expectations Expectations
 }
@@ -108,6 +109,10 @@ func (r Rule) ShouldBe(result Expectations) error {
 	}
 
 	return nil
+}
+
+func (r Rule) StrSkip() string {
+	return fmt.Sprintf("\t\t[Skip] %v", r.Name)
 }
 
 func (r Rule) StrSuccess() string {
