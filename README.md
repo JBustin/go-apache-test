@@ -79,7 +79,7 @@ You should list all the backends expected by the vhost proxies.
 For example, if I set a proxy balancer to route my trafic to a specific backend, I need to declare it in configuration.
 
 ```
-  <Proxy balancer://nodejscluster>
+  <Proxy balancer://newstackcluster>
     ProxySet lbmethod=bybusyness
     BalancerMember http://proxy.new-stack.com:3011 route=new-stack
     Proxyset stickysession=JSESSIONID
