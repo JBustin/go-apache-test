@@ -5,6 +5,8 @@ Apache2.4 test CLI - Test your vhosts
 Purpose is mainly to test some rewrite mod directives.
 If you want to go further, open an issue.
 
+<img width="902" alt="Capture d’écran 2021-11-25 à 12 36 58" src="https://user-images.githubusercontent.com/2632709/143434873-0771abb1-bf08-4e8d-9c1d-57974e6eab0c.png">
+
 ## Install
 
 Requirements: docker
